@@ -5,10 +5,6 @@
 
 /********* VARIABLES *********/
 
-// We control which screen is active by settings / updating
-// gameScreen variable. We display the correct screen according
-// to the value of this variable.
-//
 // 0: Initial Screen
 // 1: Game Screen
 // 2: Win Screen
@@ -16,8 +12,12 @@
 
 int gameScreen = 0;
 
+// goal changes with where the mouse is clicked
+
 int goalx = 900 - 10;
 int goaly = 10;
+
+// collision lines
 
 int bez1_x1 = 0;
 int bez1_y1 = 0;
@@ -29,11 +29,23 @@ int bez2_y1 = 0;
 int bez2_x2 = 900;
 int bez2_y2 = 900;
 
+// mouse and goal color and size
+
 int r = 255;
 int g = 255;
 int b = 255;
 
 int radius = 35;
+
+// import and sound setup
+
+import processing.sound.*;
+Sound s;
+
+TriOsc tri1 = new TriOsc(this);
+TriOsc tri2 = new TriOsc(this);
+TriOsc tri3 = new TriOsc(this);
+TriOsc tri4 = new TriOsc(this);
 
 /********* SETUP BLOCK *********/
 
@@ -44,7 +56,6 @@ void setup() {
 /********* DRAW BLOCK *********/
 
 void draw() {
-  // Display the contents of the current screen
   if (gameScreen == 0) {
     initScreen();
   } else if (gameScreen == 1) {
@@ -54,8 +65,12 @@ void draw() {
   } else if (gameScreen == 3) {
     loseScreen();
   }
+  
+  tri1.play(mouseX/2+100,.05);
+  tri2.play(mouseY/2+100,.05);
+  tri3.play(mouseX/2+125,.05);
+  tri4.play(mouseY/2+125,.05);
 }
-
 
 /********* SCREEN CONTENTS *********/
 
@@ -65,6 +80,7 @@ void initScreen() {
   fill(int(random(100,255)),int(random(100,255)),int(random(100,255)));
   text("bezier: a game by bug creates",width/2,height/2);
 }
+
 void gameScreen() {
   background(0);
   
@@ -147,6 +163,7 @@ void gameScreen() {
     winGame();
   }
 }
+
 void loseScreen() {
   background(0);
   textAlign(CENTER);
@@ -160,7 +177,6 @@ void winScreen() {
   text("you win!",width/2,height/2);
 }
 
-
 /********* INPUTS *********/
 
 public void mouseReleased() {
@@ -172,6 +188,8 @@ public void mouseReleased() {
     startGame();
   }
 }
+
+/********* OTHER FUNCTIONS *********/
 
 PVector getDistance( float x1, float y1, float x2, float y2, float x, float y ){
   PVector result = new PVector(); 
@@ -203,8 +221,6 @@ PVector getDistance( float x1, float y1, float x2, float y2, float x, float y ){
   
   return result;   
 }
-
-/********* OTHER FUNCTIONS *********/
 
 // This method sets the necessary variables to start the game  
 void startGame() {
