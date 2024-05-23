@@ -98,6 +98,10 @@ void initScreen() {
   line(width-5,5,width-5,height-5);
   line(width-5,height-5,5,height-5);
   line(5,height-5,5,5);
+  
+  // option to save opening screen still:
+  //noLoop();
+  //save("bezierStillOpen4.png");
 }
 
 void gameScreen() {
@@ -198,6 +202,10 @@ void gameScreen() {
     }
     winGame();
   }
+  
+  // option to save screenshot:
+  //noLoop();
+  //save("bezierStill4.png");
 }
 
 void loseScreen() {
