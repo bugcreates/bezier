@@ -14,20 +14,20 @@ int gameScreen = 0;
 
 // goal changes with where the mouse is clicked
 
-int goalx = 900 - 10;
-int goaly = 10;
+int goalx = 720 - 20;
+int goaly = 20;
 
 // collision lines
 
 int bez1_x1 = 0;
 int bez1_y1 = 0;
-int bez1_x2 = 900;
-int bez1_y2 = 900;
+int bez1_x2 = 720;
+int bez1_y2 = 720;
 
 int bez2_x1 = 0;
 int bez2_y1 = 0;
-int bez2_x2 = 900;
-int bez2_y2 = 900;
+int bez2_x2 = 720;
+int bez2_y2 = 720;
 
 // mouse and goal color and size
 
@@ -36,6 +36,12 @@ int g = 255;
 int b = 255;
 
 int radius = 35;
+
+// time
+
+float seconds = 0;
+float last = 0;
+float best = -1;
 
 // import and sound setup
 
@@ -46,11 +52,12 @@ TriOsc tri1 = new TriOsc(this);
 TriOsc tri2 = new TriOsc(this);
 TriOsc tri3 = new TriOsc(this);
 TriOsc tri4 = new TriOsc(this);
+WhiteNoise noise = new WhiteNoise(this);
 
 /********* SETUP BLOCK *********/
 
 void setup() {
-  size(900,900);
+  size(720,720);
 }
 
 /********* DRAW BLOCK *********/
@@ -66,6 +73,8 @@ void draw() {
     loseScreen();
   }
   
+  noise.play();
+  noise.amp(10/getDistance(bez1_x1,bez1_y1,bez1_x2,bez1_y2,mouseX,mouseY).z);
   tri1.play(mouseX/2+100,.05);
   tri2.play(mouseY/2+100,.05);
   tri3.play(mouseX/2+125,.05);
@@ -76,14 +85,27 @@ void draw() {
 
 void initScreen() {
   background(0);
+  
+  // text
   textAlign(CENTER);
   fill(int(random(100,255)),int(random(100,255)),int(random(100,255)));
   text("bezier: a game by bug creates",width/2,height/2);
+  
+  // outline
+  stroke(int(random(100,255)),int(random(100,255)),int(random(100,255)));
+  strokeWeight(2);
+  line(5,5,width-5,5);
+  line(width-5,5,width-5,height-5);
+  line(width-5,height-5,5,height-5);
+  line(5,height-5,5,5);
 }
 
 void gameScreen() {
   background(0);
+  strokeWeight(2);
   
+  // beziers
+  stroke(int(random(100,255)),int(random(100,255)),int(random(100,255)));
   fill(int(random(100,255)),int(random(100,255)),int(random(100,255)));
   bezier(bez1_x1,bez1_y1,int(random(width)),int(random(height)),int(random(width)),int(random(height)),bez1_x2,bez1_y2);
   if (bez1_x1 > 0 && bez1_x1 < width) {
@@ -115,6 +137,7 @@ void gameScreen() {
     bez1_y2 += int(random(-10,-1));
   }
   
+  stroke(int(random(100,255)),int(random(100,255)),int(random(100,255)));
   fill(int(random(100,255)),int(random(100,255)),int(random(100,255)));
   bezier(bez2_x1,bez2_y1,int(random(width)),int(random(height)),int(random(width)),int(random(height)),bez2_x2,bez2_y2);
   if (bez2_x1 > 0 && bez2_x1 < width) {
@@ -146,6 +169,14 @@ void gameScreen() {
     bez2_y2 += int(random(-10,-1));
   }
   
+  // outline
+  stroke(int(random(100,255)),int(random(100,255)),int(random(100,255)));
+  line(5,5,width-5,5);
+  line(width-5,5,width-5,height-5);
+  line(width-5,height-5,5,height-5);
+  line(5,height-5,5,5);
+  
+  // mouse
   r = int(random(100,255));
   g = int(random(100,255));
   b = int(random(100,255));
@@ -155,42 +186,67 @@ void gameScreen() {
   ellipse(mouseX,mouseY,radius,radius);
   ellipse(goalx,goaly,radius,radius);
   
-  if (getDistance(bez1_x1,bez1_y1,bez1_x2,bez1_y2,mouseX,mouseY).z < 5) {
+  // end game
+  if (getDistance(bez1_x1,bez1_y1,bez1_x2,bez1_y2,mouseX,mouseY).z < 10 || mouseX < 5 || mouseX > width - 5 || mouseY < 5 || mouseY > height - 5) {
     loseGame();
-  } else if (getDistance(bez2_x1,bez2_y1,bez2_x2,bez2_y2,mouseX,mouseY).z < 5) {
+  } else if (getDistance(bez2_x1,bez2_y1,bez2_x2,bez2_y2,mouseX,mouseY).z < 10 || mouseX < 5 || mouseX > width - 5 || mouseY < 5 || mouseY > height - 5) {
     loseGame();
   } else if (dist(goalx,goaly,mouseX,mouseY) < 10) {
+    seconds = millis() - last;
+    if (best == -1 || seconds < best) {
+      best = seconds;
+    }
     winGame();
   }
 }
 
 void loseScreen() {
   background(0);
+  
+  // text
   textAlign(CENTER);
   fill(int(random(100,255)),int(random(100,255)),int(random(100,255)));
   text("you lose!",width/2,height/2);
+  
+  // outline
+  stroke(int(random(100,255)),int(random(100,255)),int(random(100,255)));
+  strokeWeight(2);
+  line(5,5,width-5,5);
+  line(width-5,5,width-5,height-5);
+  line(width-5,height-5,5,height-5);
+  line(5,height-5,5,5);
 }
 void winScreen() {
   background(0);
+  
+  // text
   textAlign(CENTER);
   fill(int(random(100,255)),int(random(100,255)),int(random(100,255)));
   text("you win!",width/2,height/2);
+  text(nfc(round(seconds))+" seconds",width/2,height*2/3);
+  text("best: "+nfc(round(best)),width/2,height*3/4);
+  
+  // outline
+  stroke(int(random(100,255)),int(random(100,255)),int(random(100,255)));
+  strokeWeight(2);
+  line(5,5,width-5,5);
+  line(width-5,5,width-5,height-5);
+  line(width-5,height-5,5,height-5);
+  line(5,height-5,5,5);
 }
 
 /********* INPUTS *********/
 
 public void mouseReleased() {
-  // if we are on the initial screen when clicked, start the game
-  if (gameScreen==0) {
+  if (gameScreen == 0 || gameScreen == 2 || gameScreen == 3) {
     startGame();
-  }
-  if (gameScreen==2 || gameScreen==3) {
-    startGame();
+    last = millis();
   }
 }
 
 /********* OTHER FUNCTIONS *********/
 
+// get distance from mouse to bezier base line
 PVector getDistance( float x1, float y1, float x2, float y2, float x, float y ){
   PVector result = new PVector(); 
   
@@ -224,12 +280,12 @@ PVector getDistance( float x1, float y1, float x2, float y2, float x, float y ){
 
 // This method sets the necessary variables to start the game  
 void startGame() {
-  if (mouseX + (900-mouseY) > 900) {
-      goalx = 10;
-      goaly = height - 10;
+  if (mouseX + (height-mouseY) > width) {
+      goalx = 20;
+      goaly = height - 20;
     } else {
-      goalx = 900 - 10;
-      goaly = 10;
+      goalx = width - 20;
+      goaly = 20;
     }
   gameScreen=1;
 }
