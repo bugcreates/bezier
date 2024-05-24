@@ -9,6 +9,7 @@
 // 1: Game Screen
 // 2: Win Screen
 // 3: Lose Screen
+// 4: Quit Screen
 
 int gameScreen = 0;
 
@@ -80,7 +81,7 @@ void draw() {
   }
   
   noise.play();
-  noise.amp(10/getDistance(bez1_x1,bez1_y1,bez1_x2,bez1_y2,mouseX,mouseY).z);
+  noise.amp(max(10/getDistance(bez1_x1,bez1_y1,bez1_x2,bez1_y2,mouseX,mouseY).z,10/getDistance(bez2_x1,bez2_y1,bez2_x2,bez2_y2,mouseX,mouseY).z,10/getDistance(bez3_x1,bez3_y1,bez3_x2,bez3_y2,mouseX,mouseY).z));
   tri1.play(mouseX/2+100,.05);
   tri2.play(mouseY/2+100,.05);
   tri3.play(mouseX/2+125,.05);
@@ -236,7 +237,7 @@ void gameScreen() {
   } else if (getDistance(bez2_x1,bez3_y1,bez3_x2,bez3_y2,mouseX,mouseY).z < 15 || mouseX < 5 || mouseX > width - 5 || mouseY < 5 || mouseY > height - 5) {
     loseGame();
   } else if (dist(goalx,goaly,mouseX,mouseY) < 10) {
-    seconds = millis() - last;
+    seconds = millis()/1000 - last;
     if (best == -1 || seconds < best) {
       best = seconds;
     }
@@ -246,6 +247,10 @@ void gameScreen() {
   // option to save screenshot:
   //noLoop();
   //save("bezierStill8.png");
+  
+  //if (millis()/1000 == 20) {
+  //  save("bezierStill10.png");
+  //}
 }
 
 void loseScreen() {
@@ -309,7 +314,7 @@ void quitScreen() {
 public void mouseReleased() {
   if (gameScreen == 0 || gameScreen == 2 || gameScreen == 3) {
     startGame();
-    last = millis();
+    last = millis()/1000;
   } else if (gameScreen == 4) {
     if (mouseX < width/2) {
       exit();
@@ -320,7 +325,7 @@ public void mouseReleased() {
 }
 
 public void keyPressed() {
-  if (keyCode == TAB) {
+  if (keyCode == ESC || key == 'q') {
     quitGame();
   }
 }
@@ -339,15 +344,13 @@ PVector getDistance(float x1, float y1, float x2, float y2, float x, float y) {
   
   float mX = (-x1+x)*ca + (-y1+y)*sa; 
   
-  if(mX <= 0){
+  if (mX <= 0) {
     result.x = x1; 
     result.y = y1; 
-  }
-  else if(mX >= d){
+  } else if (mX >= d) {
     result.x = x2; 
     result.y = y2; 
-  }
-  else{
+  } else{
     result.x = x1 + mX*ca; 
     result.y = y1 + mX*sa; 
   }
@@ -368,7 +371,6 @@ void startGame() {
       goalx = width - 20;
       goaly = 20;
     }
-  gameScreen=1;
   
   bez1_x1 = 0;
   bez1_y1 = 0;
@@ -382,6 +384,8 @@ void startGame() {
   bez3_y1 = 0;
   bez3_x2 = 720;
   bez3_y2 = 720;
+  
+  gameScreen=1;
 }
 
 void winGame() {
