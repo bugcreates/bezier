@@ -5,4 +5,6 @@ EPILEPSY WARNING -- FLASHING COLORS
 
 you'll figure it out
 
-made may 2024
+made may/june 2024
+
+https://bugcreates.itch.io/bezier
