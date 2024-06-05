@@ -15,25 +15,25 @@ int gameScreen = 0;
 
 // goal changes with where the mouse is clicked
 
-int goalx = 720 - 20;
+int goalx = 700 - 20;
 int goaly = 20;
 
 // collision lines
 
 int bez1_x1 = 0;
 int bez1_y1 = 0;
-int bez1_x2 = 720;
-int bez1_y2 = 720;
+int bez1_x2 = 700;
+int bez1_y2 = 700;
 
 int bez2_x1 = 0;
 int bez2_y1 = 0;
-int bez2_x2 = 720;
-int bez2_y2 = 720;
+int bez2_x2 = 700;
+int bez2_y2 = 700;
 
 int bez3_x1 = 0;
 int bez3_y1 = 0;
-int bez3_x2 = 720;
-int bez3_y2 = 720;
+int bez3_x2 = 700;
+int bez3_y2 = 700;
 
 // mouse and goal color and size
 int r = 255;
@@ -62,7 +62,8 @@ WhiteNoise noise = new WhiteNoise(this);
 /********* SETUP BLOCK *********/
 
 void setup() {
-  size(720,720);
+  size(700,700);
+  textSize(20);
 }
 
 /********* DRAW BLOCK *********/
